@@ -1017,6 +1017,33 @@
       object-fit: contain;
       display: block;
     }
+
+    @media (max-aspect-ratio: 999/1000) {
+      .center {
+        display: contents;
+      }
+      .content {
+        grid-template-rows: auto 1fr;
+      }
+      .center-top {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        background: var(--dark);
+      }
+      .left-panel {
+        grid-column: 1;
+        grid-row: 2;
+      }
+      .center-bottom {
+        grid-column: 2;
+        grid-row: 2;
+        background: var(--dark);
+      }
+      .right-panel {
+        grid-column: 3;
+        grid-row: 2;
+      }
+    }
   </style>
 </head>
 
