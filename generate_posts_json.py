@@ -9,8 +9,8 @@ def generate_posts_registry():
         os.makedirs(posts_dir)
         print(f"Created directory: {posts_dir}")
     
-    # Find all .md files
-    markdown_files = [f for f in os.listdir(posts_dir) if f.endswith('.md')]
+    # Find all .html post files
+    markdown_files = [f for f in os.listdir(posts_dir) if f.endswith('.html')]
     markdown_files.sort()
     
     # Generate JSON registry

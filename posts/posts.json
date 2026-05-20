@@ -1,8 +1,3 @@
 [
-  "docker.md",
-  "nbody.md",
-  "planets.md",
-  "rust.md",
-  "shaders.md",
-  "ui.md"
+  "astrobee.html"
 ]
