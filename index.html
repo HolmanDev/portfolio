@@ -707,12 +707,12 @@
 
     .hud-grid {
       display: grid;
-      grid-template-columns: 0.7fr 5fr;
-      grid-template-rows: auto 1fr auto;
+      grid-template-columns: 0.7fr 6fr 1fr;
+      grid-template-rows: auto auto 1fr;
       grid-template-areas:
-        "profile bio"
-        "finger  bio"
-        "walker  scope";
+        "profile bio scope"
+        "finger  bio scope"
+        "walker  bio scope";
       gap: 4px;
       flex: 1;
       min-height: 400px;
@@ -804,7 +804,7 @@
     .hud-scope-box {
       grid-area: scope;
       width: 100%;
-      height: 110px;
+      height: 100%;
     }
 
     #hud-walker-canvas {
@@ -1440,14 +1440,14 @@
         }
 
         ctx.strokeStyle = 'rgba(255, 144, 0, 0.15)';
-        ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h); ctx.stroke();
 
         ctx.strokeStyle = '#ff9000';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
-        for (let x = 0; x < w; x++) {
-          const y = h / 2 + Math.sin(x * 0.035 + phase) * (h * 0.25) * Math.sin(x * 0.006 + phase * 0.4);
-          if (x === 0) ctx.moveTo(x, y);
+        for (let y = 0; y < h; y++) {
+          const x = w / 2 + Math.sin(y * 0.035 + phase) * (w * 0.25) * Math.sin(y * 0.006 + phase * 0.4);
+          if (y === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
         ctx.stroke();
@@ -1455,9 +1455,9 @@
         ctx.strokeStyle = 'rgba(255, 144, 0, 0.35)';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        for (let x = 0; x < w; x++) {
-          const y = h / 2 + Math.cos(x * 0.02 - phase * 1.3) * (h * 0.15);
-          if (x === 0) ctx.moveTo(x, y);
+        for (let y = 0; y < h; y++) {
+          const x = w / 2 + Math.cos(y * 0.02 - phase * 1.3) * (w * 0.15);
+          if (y === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
         ctx.stroke();
