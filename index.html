@@ -106,6 +106,7 @@
       display: grid;
       grid-template-columns: var(--left-width) 1fr var(--right-width);
       min-height: 0;
+      overflow: hidden;
     }
 
     /* ── LEFT PANEL ── */
@@ -117,6 +118,7 @@
       gap: 0.6vmin;
       background: var(--cream);
       overflow-y: auto;
+      min-height: 0;
       scrollbar-width: thin;
       scrollbar-color: var(--gold) var(--dark);
     }
@@ -125,6 +127,9 @@
     .center {
       background: var(--dark);
       position: relative;
+      overflow: hidden;
+      min-height: 0;
+      min-width: 0;
     }
     .center-frame {
       position: absolute;
@@ -149,6 +154,7 @@
       flex-direction: column;
       gap: 0.6vmin;
       overflow-y: auto;
+      min-height: 0;
       scrollbar-width: thin;
       scrollbar-color: var(--gold) var(--dark);
     }
@@ -169,6 +175,7 @@
       height: 25vmin;
       min-height: 0;
       flex-shrink: 0;
+      overflow: hidden;
     }
 
     /* ── PANEL HEADER ── */
@@ -515,6 +522,322 @@
       display: block;
     }
     .contact-block a:hover { color: var(--yellow2); }
+
+    /* ── AMBER HUD PANEL ── */
+    :root {
+      --amber: #ff9000;
+      --amber-dim: rgba(255, 144, 0, 0.4);
+      --amber-glow: rgba(255, 144, 0, 0.15);
+      --amber-bg: rgba(16, 4, 0, 0.85);
+    }
+
+    .hud-panel {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 6px;
+      color: var(--amber);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 7px;
+      line-height: 1.4;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    /* Subtle Scanlines overlay */
+    .crt-scanlines {
+      position: relative;
+    }
+    .crt-scanlines::after {
+      content: " ";
+      display: block;
+      position: absolute;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
+      background-size: 100% 3px;
+      z-index: 5;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .hud-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--amber-dim);
+      background: var(--amber-glow);
+      padding: 4px 8px;
+      font-size: 8px;
+      letter-spacing: 1px;
+      flex-shrink: 0;
+    }
+
+    .hud-battery {
+      display: flex;
+      gap: 2px;
+      border: 1px solid var(--amber);
+      padding: 1px;
+      width: 14px;
+      height: 7px;
+      position: relative;
+    }
+    .hud-battery::after {
+      content: '';
+      position: absolute;
+      right: -2px;
+      top: 1px;
+      width: 1px;
+      height: 3px;
+      background: var(--amber);
+    }
+    .hud-battery span {
+      flex: 1;
+      background: var(--amber);
+    }
+
+    .hud-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: 2fr 1fr 1.5fr;
+      grid-template-areas:
+        "profile profile circuit circuit"
+        "finger  info    info    info"
+        "walker  scope   scope   scope";
+      gap: 4px;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .hud-box {
+      border: 1px solid var(--amber-dim);
+      background: var(--amber-bg);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      box-sizing: border-box;
+      min-height: 0;
+      min-width: 0;
+    }
+
+    .hud-box::before, .hud-box::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-color: var(--amber);
+      border-style: solid;
+      pointer-events: none;
+    }
+    .hud-box::before {
+      top: -1px; left: -1px;
+      border-width: 1px 0 0 1px;
+    }
+    .hud-box::after {
+      bottom: -1px; right: -1px;
+      border-width: 0 1px 1px 0;
+    }
+
+    .hud-box-hdr {
+      background: var(--amber-glow);
+      border-bottom: 1px solid var(--amber-dim);
+      color: var(--amber);
+      font-size: 6px;
+      padding: 2px 4px;
+      letter-spacing: 1px;
+      flex-shrink: 0;
+    }
+
+    .hud-box-body {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      min-height: 0;
+      min-width: 0;
+    }
+
+    /* Box specific positioning */
+    .hud-profile-box {
+      grid-area: profile;
+      justify-self: center;
+      width: auto;
+      height: 100%;
+      aspect-ratio: var(--profile-ar, 1 / 1);
+      max-width: 100%;
+    }
+    .hud-circuit-box { grid-area: circuit; }
+    .hud-finger-box { grid-area: finger; }
+    .hud-info-box { grid-area: info; }
+    .hud-walker-box {
+      grid-area: walker;
+      justify-self: center;
+      width: auto;
+      height: 100%;
+      aspect-ratio: 1 / 1;
+      max-width: 100%;
+    }
+    .hud-scope-box { grid-area: scope; }
+
+    /* Canvas / SVGs absolute containment */
+    #hud-profile-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: none;
+    }
+    
+    .hud-profile-fallback {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: #120400;
+      display: block;
+    }
+    .hud-profile-fallback img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: grayscale(1) contrast(3.5) brightness(0.85);
+      mix-blend-mode: screen;
+      opacity: 0.85;
+    }
+    .hud-profile-fallback::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(var(--amber) 25%, transparent 30%),
+        radial-gradient(rgba(255, 144, 0, 0.4) 25%, transparent 30%);
+      background-size: 3px 3px;
+      background-position: 0 0, 1.5px 1.5px;
+      mix-blend-mode: overlay;
+      pointer-events: none;
+    }
+
+    #hud-circuit-svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .bracket-frame {
+      border: 1px solid rgba(255, 144, 0, 0.2);
+      padding: 4px;
+      position: relative;
+      width: 80%;
+      height: 80%;
+      max-width: 90px;
+      max-height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      aspect-ratio: 1 / 1;
+    }
+    .bracket-frame::before, .bracket-frame::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-color: var(--amber);
+      border-style: solid;
+    }
+    .bracket-frame::before {
+      top: -2px; left: -2px;
+      border-width: 2px 0 0 2px;
+    }
+    .bracket-frame::after {
+      bottom: -2px; right: -2px;
+      border-width: 0 2px 2px 0;
+    }
+
+    /* Info Table styling */
+    .hud-info-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      height: 100%;
+      padding: 4px 8px;
+      box-sizing: border-box;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .hud-info-row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed rgba(255, 144, 0, 0.2);
+      padding: 2px 0;
+    }
+    .hud-info-row:last-child {
+      border-bottom: none;
+    }
+    .hud-info-row .lbl {
+      color: var(--amber-dim);
+    }
+    .hud-info-row .val {
+      color: var(--amber);
+      font-size: 6px;
+    }
+    .text-orange {
+      color: #ffaa00;
+      text-shadow: 0 0 3px rgba(255, 170, 0, 0.6);
+    }
+
+    /* Scope Oscilloscope container */
+    .hud-scope-box .hud-box-body {
+      display: flex;
+      flex-direction: column;
+      padding: 4px;
+      box-sizing: border-box;
+      min-height: 0;
+    }
+    .hud-scope-container {
+      flex: 1;
+      position: relative;
+      border: 1px solid rgba(255, 144, 0, 0.2);
+      background: #080200;
+      width: 100%;
+      min-height: 0;
+    }
+    #hud-scope-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .hud-matrix-readout {
+      font-size: 5px;
+      height: 12px;
+      color: var(--amber-dim);
+      overflow: hidden;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-top: 1px solid rgba(255, 144, 0, 0.2);
+      margin-top: 4px;
+    }
+
+    #hud-walker-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -584,8 +907,103 @@
 
     <!-- CENTER -->
     <div class="center" id="center-window">
-      <div class="center-frame"></div>
-      <div class="center-cursor">C:\&gt; SIMON.EXE<br><br><span class="blink">█</span></div>
+      <div class="hud-panel crt-scanlines">
+        <div class="hud-header">
+          <span class="hud-title">SUBJECT: HOLMQVIST . S</span>
+          <div class="hud-battery">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="hud-grid">
+          <div class="hud-box hud-profile-box">
+            <div class="hud-box-hdr">PROFILE.SYS</div>
+            <div class="hud-box-body">
+              <canvas id="hud-profile-canvas"></canvas>
+              <div class="hud-profile-fallback" id="hud-profile-fallback">
+                <img src="rsc/profile.jpg" alt="Profile Fallback">
+              </div>
+            </div>
+          </div>
+          <div class="hud-box hud-circuit-box">
+            <div class="hud-box-hdr">PROCESSOR.IO</div>
+            <div class="hud-box-body">
+              <svg id="hud-circuit-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
+                <rect x="75" y="75" width="50" height="50" rx="4" fill="#150600" stroke="#ff9000" stroke-width="2"></rect>
+                <rect x="85" y="85" width="30" height="30" fill="none" stroke="#ff9000" stroke-width="1" stroke-dasharray="2,2"></rect>
+                <line x1="65" y1="85" x2="75" y2="85" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="65" y1="95" x2="75" y2="95" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="65" y1="105" x2="75" y2="105" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="65" y1="115" x2="75" y2="115" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="125" y1="85" x2="135" y2="85" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="125" y1="95" x2="135" y2="95" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="125" y1="105" x2="135" y2="105" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="125" y1="115" x2="135" y2="115" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="85" y1="65" x2="85" y2="75" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="95" y1="65" x2="95" y2="75" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="105" y1="65" x2="105" y2="75" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="115" y1="65" x2="115" y2="75" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="85" y1="125" x2="85" y2="135" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="95" y1="125" x2="95" y2="135" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="105" y1="125" x2="105" y2="135" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="115" y1="125" x2="115" y2="135" stroke="#ff9000" stroke-width="2"></line>
+                <path d="M 65,85 L 45,85 L 30,100 L 15,100" fill="none" stroke="#b87000" stroke-width="1.5" stroke-linecap="round"></path>
+                <path d="M 65,95 L 50,95 L 40,105 L 40,130 L 30,140 L 15,140" fill="none" stroke="#b87000" stroke-width="1.5" stroke-linecap="round"></path>
+                <path d="M 65,115 L 55,115 L 45,125 L 45,150 L 35,160 M 35,160 L 35,185" fill="none" stroke="#b87000" stroke-width="1.5" stroke-linecap="round"></path>
+                <path d="M 135,85 L 155,85 L 170,70 L 185,70" fill="none" stroke="#b87000" stroke-width="1.5" stroke-linecap="round"></path>
+                <path d="M 135,105 L 150,105 L 160,115 L 160,140 L 170,150 L 185,150" fill="none" stroke="#b87000" stroke-width="1.5" stroke-linecap="round"></path>
+                <path d="M 95,65 L 95,45 L 110,30 L 140,30" fill="none" stroke="#b87000" stroke-width="1.5" stroke-linecap="round"></path>
+                <path d="M 105,65 L 105,50 L 120,35 L 140,35" fill="none" stroke="#b87000" stroke-width="1.5" stroke-linecap="round"></path>
+                <circle cx="15" cy="100" r="3" fill="#ff9000"></circle>
+                <circle cx="15" cy="140" r="3" fill="#ff9000"></circle>
+                <circle cx="185" cy="70" r="3" fill="#ff9000"></circle>
+                <circle cx="185" cy="150" r="3" fill="#ff9000"></circle>
+                <rect x="25" y="97" width="10" height="6" fill="#ff9000" stroke="none" opacity="0.7"></rect>
+                <rect x="165" y="147" width="10" height="6" fill="#ff9000" stroke="none" opacity="0.7"></rect>
+                <path d="M 65,105 L 35,105 L 20,120 L 5,120" fill="none" stroke="#ff9000" stroke-width="2" stroke-linecap="round" stroke-dasharray="10, 50" class="signal-trace"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="hud-box hud-finger-box">
+            <div class="hud-box-body">
+              <div class="bracket-frame">
+                <svg id="hud-fingerprint" viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+                  <g fill="none" stroke="#ff9000" stroke-width="1.5" stroke-linecap="round" opacity="0.8">
+                    <path d="M 50,20 C 65,20 75,32 75,50 C 75,68 62,80 50,80 C 38,80 25,68 25,50 C 25,32 35,20 50,20 Z" stroke-dasharray="120, 20, 40, 10"></path>
+                    <path d="M 50,28 C 61,28 68,37 68,50 C 68,63 59,72 50,72 C 41,72 32,63 32,50 C 32,37 39,28 50,28 Z" stroke-dasharray="80, 15, 30, 8"></path>
+                    <path d="M 50,35 C 57,35 62,41 62,50 C 62,59 55,65 50,65 C 45,65 38,59 38,50 C 38,41 43,35 50,35 Z" stroke-dasharray="40, 10, 15, 5"></path>
+                    <path d="M 50,42 C 53,42 55,45 55,50 C 55,55 53,58 50,58 C 47,58 45,55 45,50 C 45,45 47,42 50,42 Z" stroke-dasharray="10, 5"></path>
+                    <path d="M 50,12 C 70,12 82,27 82,50 C 82,73 68,88 50,88 C 32,88 18,73 18,50 C 18,27 30,12 50,12 Z" stroke-dasharray="180, 25, 60, 15"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="hud-box hud-info-box">
+            <div class="hud-info-body">
+              <div class="hud-info-row"><span class="lbl">NAME</span><span class="val">SIMON HOLMQVIST</span></div>
+              <div class="hud-info-row"><span class="lbl">INCEPT DATE</span><span class="val">03/05/2008</span></div>
+              <div class="hud-info-row"><span class="lbl">FUNCTION</span><span class="val">DEVELOPER</span></div>
+              <div class="hud-info-row"><span class="lbl">MENTAL STATE</span><span class="val">STABLE // ANTIGRAVITY</span></div>
+              <div class="hud-info-row"><span class="lbl">LOCATION</span><span class="val">57.7089° N, 11.9746° E</span></div>
+              <div class="hud-info-row"><span class="lbl">THREAT LEVEL</span><span class="val text-orange">★★★</span></div>
+            </div>
+          </div>
+          <div class="hud-box hud-walker-box">
+            <div class="hud-box-body">
+              <canvas id="hud-walker-canvas"></canvas>
+            </div>
+          </div>
+          <div class="hud-box hud-scope-box">
+            <div class="hud-box-hdr">SPECIAL SKILLS // SENSOR.LOG</div>
+            <div class="hud-box-body flex-col">
+              <div class="hud-scope-container">
+                <canvas id="hud-scope-canvas"></canvas>
+              </div>
+              <div class="hud-matrix-readout" id="hud-matrix-readout">SYSTEM_LOG: ACTIVE // STATUS_OK</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- RIGHT PANEL -->
@@ -669,9 +1087,395 @@
 
   <script>
     const defaultConsoleHTML = `
-      <div class="center-frame"></div>
-      <div class="center-cursor">C:\\&gt; SIMON.EXE<br><br><span class="blink">█</span></div>
+      <div class="hud-panel crt-scanlines">
+        <div class="hud-header">
+          <span class="hud-title">SUBJECT: HOLMQVIST . S</span>
+          <div class="hud-battery">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="hud-grid">
+          <div class="hud-box hud-profile-box">
+            <div class="hud-box-hdr">PROFILE.SYS</div>
+            <div class="hud-box-body">
+              <canvas id="hud-profile-canvas"></canvas>
+              <div class="hud-profile-fallback" id="hud-profile-fallback">
+                <img src="rsc/profile.jpg" alt="Profile Fallback">
+              </div>
+            </div>
+          </div>
+          <div class="hud-box hud-circuit-box">
+            <div class="hud-box-hdr">PROCESSOR.IO</div>
+            <div class="hud-box-body">
+              <svg id="hud-circuit-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
+                <rect x="75" y="75" width="50" height="50" rx="4" fill="#150600" stroke="#ff9000" stroke-width="2"></rect>
+                <rect x="85" y="85" width="30" height="30" fill="none" stroke="#ff9000" stroke-width="1" stroke-dasharray="2,2"></rect>
+                <line x1="65" y1="85" x2="75" y2="85" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="65" y1="95" x2="75" y2="95" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="65" y1="105" x2="75" y2="105" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="65" y1="115" x2="75" y2="115" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="125" y1="85" x2="135" y2="85" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="125" y1="95" x2="135" y2="95" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="125" y1="105" x2="135" y2="105" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="125" y1="115" x2="135" y2="115" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="85" y1="65" x2="85" y2="75" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="95" y1="65" x2="95" y2="75" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="105" y1="65" x2="105" y2="75" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="115" y1="65" x2="115" y2="75" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="85" y1="125" x2="85" y2="135" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="95" y1="125" x2="95" y2="135" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="105" y1="125" x2="105" y2="135" stroke="#ff9000" stroke-width="2"></line>
+                <line x1="115" y1="125" x2="115" y2="135" stroke="#ff9000" stroke-width="2"></line>
+                <path d="M 65,85 L 45,85 L 30,100 L 15,100" fill="none" stroke="#b87000" stroke-width="1.5" stroke-linecap="round"></path>
+                <path d="M 65,95 L 50,95 L 40,105 L 40,130 L 30,140 L 15,140" fill="none" stroke="#b87000" stroke-width="1.5" stroke-linecap="round"></path>
+                <path d="M 65,115 L 55,115 L 45,125 L 45,150 L 35,160 M 35,160 L 35,185" fill="none" stroke="#b87000" stroke-width="1.5" stroke-linecap="round"></path>
+                <path d="M 135,85 L 155,85 L 170,70 L 185,70" fill="none" stroke="#b87000" stroke-width="1.5" stroke-linecap="round"></path>
+                <path d="M 135,105 L 150,105 L 160,115 L 160,140 L 170,150 L 185,150" fill="none" stroke="#b87000" stroke-width="1.5" stroke-linecap="round"></path>
+                <path d="M 95,65 L 95,45 L 110,30 L 140,30" fill="none" stroke="#b87000" stroke-width="1.5" stroke-linecap="round"></path>
+                <path d="M 105,65 L 105,50 L 120,35 L 140,35" fill="none" stroke="#b87000" stroke-width="1.5" stroke-linecap="round"></path>
+                <circle cx="15" cy="100" r="3" fill="#ff9000"></circle>
+                <circle cx="15" cy="140" r="3" fill="#ff9000"></circle>
+                <circle cx="185" cy="70" r="3" fill="#ff9000"></circle>
+                <circle cx="185" cy="150" r="3" fill="#ff9000"></circle>
+                <rect x="25" y="97" width="10" height="6" fill="#ff9000" stroke="none" opacity="0.7"></rect>
+                <rect x="165" y="147" width="10" height="6" fill="#ff9000" stroke="none" opacity="0.7"></rect>
+                <path d="M 65,105 L 35,105 L 20,120 L 5,120" fill="none" stroke="#ff9000" stroke-width="2" stroke-linecap="round" stroke-dasharray="10, 50" class="signal-trace"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="hud-box hud-finger-box">
+            <div class="hud-box-body">
+              <div class="bracket-frame">
+                <svg id="hud-fingerprint" viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+                  <g fill="none" stroke="#ff9000" stroke-width="1.5" stroke-linecap="round" opacity="0.8">
+                    <path d="M 50,20 C 65,20 75,32 75,50 C 75,68 62,80 50,80 C 38,80 25,68 25,50 C 25,32 35,20 50,20 Z" stroke-dasharray="120, 20, 40, 10"></path>
+                    <path d="M 50,28 C 61,28 68,37 68,50 C 68,63 59,72 50,72 C 41,72 32,63 32,50 C 32,37 39,28 50,28 Z" stroke-dasharray="80, 15, 30, 8"></path>
+                    <path d="M 50,35 C 57,35 62,41 62,50 C 62,59 55,65 50,65 C 45,65 38,59 38,50 C 38,41 43,35 50,35 Z" stroke-dasharray="40, 10, 15, 5"></path>
+                    <path d="M 50,42 C 53,42 55,45 55,50 C 55,55 53,58 50,58 C 47,58 45,55 45,50 C 45,45 47,42 50,42 Z" stroke-dasharray="10, 5"></path>
+                    <path d="M 50,12 C 70,12 82,27 82,50 C 82,73 68,88 50,88 C 32,88 18,73 18,50 C 18,27 30,12 50,12 Z" stroke-dasharray="180, 25, 60, 15"></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="hud-box hud-info-box">
+            <div class="hud-info-body">
+              <div class="hud-info-row"><span class="lbl">NAME</span><span class="val">SIMON HOLMQVIST</span></div>
+              <div class="hud-info-row"><span class="lbl">INCEPT DATE</span><span class="val">03/05/2008</span></div>
+              <div class="hud-info-row"><span class="lbl">FUNCTION</span><span class="val">DEVELOPER</span></div>
+              <div class="hud-info-row"><span class="lbl">MENTAL STATE</span><span class="val">STABLE // ANTIGRAVITY</span></div>
+              <div class="hud-info-row"><span class="lbl">LOCATION</span><span class="val">57.7089° N, 11.9746° E</span></div>
+              <div class="hud-info-row"><span class="lbl">THREAT LEVEL</span><span class="val text-orange">★★★</span></div>
+            </div>
+          </div>
+          <div class="hud-box hud-walker-box">
+            <div class="hud-box-body">
+              <canvas id="hud-walker-canvas"></canvas>
+            </div>
+          </div>
+          <div class="hud-box hud-scope-box">
+            <div class="hud-box-hdr">SPECIAL SKILLS // SENSOR.LOG</div>
+            <div class="hud-box-body flex-col">
+              <div class="hud-scope-container">
+                <canvas id="hud-scope-canvas"></canvas>
+              </div>
+              <div class="hud-matrix-readout" id="hud-matrix-readout">SYSTEM_LOG: ACTIVE // STATUS_OK</div>
+            </div>
+          </div>
+        </div>
+      </div>
     `;
+
+    // ── HUD ANIMATIONS & PROCESSING ──
+    function initProfileDither() {
+      const canvas = document.getElementById('hud-profile-canvas');
+      if (!canvas) return;
+      
+      const img = new Image();
+      img.src = 'rsc/profile.jpg';
+      img.onload = () => {
+        // Detect and apply the image's natural aspect ratio to the profile box
+        const naturalW = img.naturalWidth;
+        const naturalH = img.naturalHeight;
+        const ar = naturalW / naturalH;
+        const profileBox = canvas.closest('.hud-profile-box');
+        if (profileBox) {
+          profileBox.style.setProperty('--profile-ar', ar.toFixed(4));
+          profileBox.style.aspectRatio = ar.toFixed(4);
+        }
+
+        try {
+          const ctx = canvas.getContext('2d');
+          // Use proportional canvas size based on the image's aspect ratio
+          const resolution = 128;
+          const w = ar >= 1 ? resolution : Math.round(resolution * ar);
+          const h = ar >= 1 ? Math.round(resolution / ar) : resolution;
+          canvas.width = w;
+          canvas.height = h;
+          
+          ctx.drawImage(img, 0, 0, w, h);
+          const imgData = ctx.getImageData(0, 0, w, h);
+          const data = imgData.data;
+          
+          // Floyd-Steinberg Dither
+          for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+              const idx = (y * w + x) * 4;
+              const r = data[idx];
+              const g = data[idx+1];
+              const b = data[idx+2];
+              const gray = 0.299*r + 0.587*g + 0.114*b;
+              
+              const newVal = gray < 128 ? 0 : 255;
+              const err = gray - newVal;
+              
+              data[idx] = newVal;
+              data[idx+1] = newVal;
+              data[idx+2] = newVal;
+              
+              if (x+1 < w)      addDitherErr(data, (y*w + x+1)*4,      err * 7/16);
+              if (x-1 >= 0 && y+1 < h) addDitherErr(data, ((y+1)*w + x-1)*4, err * 3/16);
+              if (y+1 < h)      addDitherErr(data, ((y+1)*w + x)*4,    err * 5/16);
+              if (x+1 < w && y+1 < h) addDitherErr(data, ((y+1)*w + x+1)*4, err * 1/16);
+            }
+          }
+          
+          // Map to Amber/Orange Palette: Black -> #1a0500, White -> #ff9000
+          for (let i = 0; i < data.length; i += 4) {
+            const v = data[i];
+            if (v < 128) {
+              data[i] = 26;     // R
+              data[i+1] = 5;    // G
+              data[i+2] = 0;    // B
+            } else {
+              data[i] = 255;    // R
+              data[i+1] = 144;  // G
+              data[i+2] = 0;    // B
+            }
+          }
+          ctx.putImageData(imgData, 0, 0);
+          
+          const fallback = document.getElementById('hud-profile-fallback');
+          if (fallback) fallback.style.display = 'none';
+          canvas.style.display = 'block';
+        } catch (e) {
+          console.warn("CORS blocks canvas pixel manipulation. Using CSS dither fallback.", e);
+          const fallback = document.getElementById('hud-profile-fallback');
+          if (fallback) fallback.style.display = 'block';
+          canvas.style.display = 'none';
+        }
+      };
+      img.onerror = () => {
+        console.warn("Could not load profile.jpg for dithering.");
+      };
+    }
+    
+    function addDitherErr(data, idx, amount) {
+      data[idx]   = Math.max(0, Math.min(255, data[idx] + amount));
+      data[idx+1] = Math.max(0, Math.min(255, data[idx+1] + amount));
+      data[idx+2] = Math.max(0, Math.min(255, data[idx+2] + amount));
+    }
+
+    function initWalker() {
+      const canvas = document.getElementById('hud-walker-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      
+      const cols = 22;
+      const rows = 28;
+      canvas.width = cols * 4;
+      canvas.height = rows * 6;
+      
+      const offscreen = document.createElement('canvas');
+      offscreen.width = cols;
+      offscreen.height = rows;
+      const oCtx = offscreen.getContext('2d');
+      
+      let reqId;
+      function drawFrame() {
+        if (!document.getElementById('hud-walker-canvas')) return; // Exit if unmounted
+        
+        oCtx.clearRect(0, 0, cols, rows);
+        const t = Date.now() / 130;
+        const baseline = rows - 4;
+        const x = cols / 2 - 1;
+        const y = baseline - 11 + Math.sin(t * 2) * 0.7; // bobbing
+        
+        oCtx.strokeStyle = '#ffffff';
+        oCtx.fillStyle = '#ffffff';
+        oCtx.lineWidth = 1.8;
+        oCtx.lineCap = 'round';
+        
+        // Head
+        oCtx.beginPath();
+        oCtx.arc(x, y - 6, 1.8, 0, Math.PI * 2);
+        oCtx.fill();
+        
+        // Spine
+        oCtx.beginPath();
+        oCtx.moveTo(x, y - 4.5);
+        oCtx.lineTo(x, y + 1);
+        oCtx.stroke();
+        
+        // Leg 1
+        const knee1X = x + Math.sin(t) * 2.5;
+        const knee1Y = y + 5 + Math.cos(t) * 0.8;
+        const foot1X = x + Math.sin(t - 0.2) * 4.5;
+        const foot1Y = baseline;
+        oCtx.beginPath();
+        oCtx.moveTo(x, y + 1);
+        oCtx.lineTo(knee1X, knee1Y);
+        oCtx.lineTo(foot1X, foot1Y);
+        oCtx.stroke();
+        
+        // Leg 2
+        const knee2X = x + Math.sin(t + Math.PI) * 2.5;
+        const knee2Y = y + 5 + Math.cos(t + Math.PI) * 0.8;
+        const foot2X = x + Math.sin(t + Math.PI - 0.2) * 4.5;
+        const foot2Y = baseline;
+        oCtx.beginPath();
+        oCtx.moveTo(x, y + 1);
+        oCtx.lineTo(knee2X, knee2Y);
+        oCtx.lineTo(foot2X, foot2Y);
+        oCtx.stroke();
+        
+        // Arm 1
+        const shoulderY = y - 3.5;
+        const elbow1X = x - 2 + Math.sin(t + Math.PI) * 1.5;
+        const hand1X = x - 3.5 + Math.sin(t + Math.PI) * 3;
+        const hand1Y = y + 2.5;
+        oCtx.beginPath();
+        oCtx.moveTo(x, shoulderY);
+        oCtx.lineTo(elbow1X, y + 0.5);
+        oCtx.lineTo(hand1X, hand1Y);
+        oCtx.stroke();
+        
+        // Arm 2
+        const elbow2X = x + 2 + Math.sin(t) * 1.5;
+        const hand2X = x + 3.5 + Math.sin(t) * 3;
+        const hand2Y = y + 2.5;
+        oCtx.beginPath();
+        oCtx.moveTo(x, shoulderY);
+        oCtx.lineTo(elbow2X, y + 0.5);
+        oCtx.lineTo(hand2X, hand2Y);
+        oCtx.stroke();
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        try {
+          const imgData = oCtx.getImageData(0, 0, cols, rows);
+          const data = imgData.data;
+          
+          ctx.fillStyle = '#ff9000';
+          ctx.font = '5px Press Start 2P, monospace';
+          
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              const idx = (r * cols + c) * 4;
+              if (data[idx+3] > 60) {
+                ctx.fillText('>', c * 4, r * 6);
+              } else if (r % 2 === 0 && c % 2 === 0) {
+                ctx.fillStyle = 'rgba(255, 144, 0, 0.08)';
+                ctx.fillRect(c * 4 + 1.5, r * 6 - 2.5, 1, 1);
+                ctx.fillStyle = '#ff9000';
+              }
+            }
+          }
+        } catch (e) {
+          ctx.strokeStyle = '#ff9000';
+          ctx.strokeRect(4, 4, canvas.width - 8, canvas.height - 8);
+        }
+        
+        reqId = requestAnimationFrame(drawFrame);
+      }
+      drawFrame();
+    }
+
+    function initOscilloscope() {
+      const canvas = document.getElementById('hud-scope-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      
+      function resize() {
+        if (!canvas.parentElement) return;
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+      
+      let phase = 0;
+      function draw() {
+        if (!document.getElementById('hud-scope-canvas')) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const w = canvas.width;
+        const h = canvas.height;
+        
+        ctx.strokeStyle = 'rgba(255, 144, 0, 0.06)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < w; x += 15) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+        }
+        for (let y = 0; y < h; y += 15) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+        }
+        
+        ctx.strokeStyle = 'rgba(255, 144, 0, 0.15)';
+        ctx.beginPath(); ctx.moveTo(0, h/2); ctx.lineTo(w, h/2); ctx.stroke();
+        
+        ctx.strokeStyle = '#ff9000';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (let x = 0; x < w; x++) {
+          const y = h/2 + Math.sin(x*0.035 + phase) * (h*0.25) * Math.sin(x*0.006 + phase*0.4);
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        
+        ctx.strokeStyle = 'rgba(255, 144, 0, 0.35)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let x = 0; x < w; x++) {
+          const y = h/2 + Math.cos(x*0.02 - phase*1.3) * (h*0.15);
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        
+        phase += 0.025;
+        requestAnimationFrame(draw);
+      }
+      draw();
+    }
+
+    function initMatrixReadout() {
+      const el = document.getElementById('hud-matrix-readout');
+      if (!el) return;
+      
+      function generateHex() {
+        const parts = [];
+        for (let i = 0; i < 9; i++) {
+          parts.push(Math.floor(Math.random() * 256).toString(16).toUpperCase().padStart(2, '0'));
+        }
+        return parts.join(' ');
+      }
+      
+      const interval = setInterval(() => {
+        if (!document.getElementById('hud-matrix-readout')) {
+          clearInterval(interval);
+          return;
+        }
+        el.textContent = `SENSOR_LOG: ${generateHex()} // STATUS_OK`;
+      }, 250);
+    }
+
+    function initHud() {
+      initProfileDither();
+      initWalker();
+      initOscilloscope();
+      initMatrixReadout();
+    }
 
     function parseFrontMatter(text) {
       const lines = text.split(/\r?\n/);
@@ -733,6 +1537,7 @@
 
     function closeNotepad() {
       document.getElementById('center-window').innerHTML = defaultConsoleHTML;
+      initHud();
     }
 
     window.closeNotepad = closeNotepad;
@@ -816,8 +1621,11 @@
       }
     }
 
-    // Initialize blog loader on page load
-    document.addEventListener('DOMContentLoaded', loadBlogPosts);
+    // Initialize blog loader and HUD panel on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadBlogPosts();
+      initHud();
+    });
   </script>
 </body>
 </html>
