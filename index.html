@@ -117,6 +117,8 @@
       gap: 0.6vmin;
       background: var(--cream);
       overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--gold) var(--dark);
     }
 
     /* ── CENTER ── */
@@ -147,6 +149,8 @@
       flex-direction: column;
       gap: 0.6vmin;
       overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--gold) var(--dark);
     }
     .icon-grid {
       display: grid;
@@ -249,11 +253,42 @@
     }
     .blog-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 1fr; /* 1 column for mobile (portrait / aspect-ratio < 3/4) */
       gap: 6px;
       overflow-y: auto;
       flex: 1;
+      min-height: 0; /* Constraints flex container to enable scrollbar */
       padding-right: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--gold) var(--dark);
+    }
+
+    /* Tablet / Square screen (aspect-ratio >= 3/4) */
+    @media (min-aspect-ratio: 3/4) {
+      .blog-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* Standard landscape (aspect-ratio >= 4/3) */
+    @media (min-aspect-ratio: 4/3) {
+      .blog-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* Widescreen / Normal desktop (aspect-ratio >= 16/10) */
+    @media (min-aspect-ratio: 16/10) {
+      .blog-grid {
+        grid-template-columns: repeat(5, 1fr); /* 5 columns for normal desktop display */
+      }
+    }
+
+    /* Ultrawide screens (aspect-ratio >= 21/9) */
+    @media (min-aspect-ratio: 21/9) {
+      .blog-grid {
+        grid-template-columns: repeat(7, 1fr); /* Extra columns for ultrawides */
+      }
     }
 
     /* Scrollbar styling for retro feel */
@@ -282,7 +317,7 @@
       flex-direction: column;
       transition: border-color 0.08s;
       overflow: hidden;
-      min-height: 55px;
+      height: 20vh; /* About 20% of screen height */
     }
     .blog-win:hover { border-color: var(--yellow2); }
 
@@ -298,7 +333,7 @@
     .blog-hdr::before { content: '■'; color: var(--green2); font-size: 4px; }
 
     .blog-thumb {
-      height: 35px;
+      height: 11vh; /* Proportionate thumbnail height within 20vh post frame */
       flex-shrink: 0;
       border-bottom: 2px solid var(--win-bdr);
       background-size: cover;
