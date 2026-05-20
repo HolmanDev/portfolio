@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PORTFOLIO.EXE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream:   #ddd0a0;
+      --cream2:  #c8b870;
+      --gold:    #b89020;
+      --dark:    #100808;
+      --dark2:   #201408;
+      --blue:    #1858a8;
+      --blue2:   #4090d0;
+      --red:     #c02020;
+      --yellow:  #d8a818;
+      --yellow2: #f0c820;
+      --green:   #285020;
+      --green2:  #60a030;
+      --win-bg:  #e0d098;
+      --win-bdr: #907810;
+      --tb-bg:   #181008;
+      --tb-col:  #d8a818;
+      
+      /* Responsive grid sizing variables based on smallest dimension (vmin) */
+      --left-width: 22vmin;
+      --right-width: 25vmin;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(ellipse at center, #1a0c04 0%, #060402 100%);
+      font-family: 'Press Start 2P', 'Courier New', monospace;
+      font-size: 8px;
+      color: var(--dark);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      overflow: hidden;
+    }
+
+    /* Scanlines */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── OUTER FRAME ── */
+    .frame {
+      width: calc(100vw - 24px);
+      height: calc(100vh - 24px);
+      border: 6px solid var(--gold);
+      outline: 2px solid #402800;
+      box-shadow: 0 0 40px rgba(180,140,20,0.15), inset 0 0 20px rgba(0,0,0,0.4);
+      background: var(--cream);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      overflow: hidden;
+    }
+
+    /* corner gems */
+    .frame-corner {
+      position: absolute;
+      width: 8px; height: 8px;
+      background: var(--red);
+      z-index: 10;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      background: var(--dark);
+      border-bottom: 3px solid var(--gold);
+      padding: 6px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tb-gem { width: 10px; height: 10px; background: var(--red); flex-shrink: 0; }
+    .tb-title { color: var(--yellow2); font-size: 9px; letter-spacing: 1px; flex: 1; }
+    .tb-right { display: flex; align-items: center; gap: 5px; }
+    .tb-ver { color: var(--cream2); font-size: 5px; }
+    .led {
+      width: 7px; height: 7px; display: inline-block;
+      box-shadow: 0 0 5px currentColor;
+    }
+
+    /* ── CONTENT GRID ── */
+    .content {
+      display: grid;
+      grid-template-columns: var(--left-width) 1fr var(--right-width);
+      min-height: 0;
+    }
+
+    /* ── LEFT PANEL ── */
+    .left-panel {
+      border-right: 3px solid var(--gold);
+      padding: 0.6vmin;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6vmin;
+      background: var(--cream);
+      overflow-y: auto;
+    }
+
+    /* ── CENTER ── */
+    .center {
+      background: var(--dark);
+      position: relative;
+    }
+    .center-frame {
+      position: absolute;
+      inset: 10px;
+      border: 2px solid var(--gold);
+      opacity: 0.35;
+    }
+    .center-cursor {
+      position: absolute;
+      bottom: 18px;
+      left: 18px;
+      color: var(--yellow);
+      font-size: 8px;
+    }
+
+    /* ── RIGHT PANEL ── */
+    .right-panel {
+      border-left: 3px solid var(--gold);
+      padding: 0.6vmin;
+      background: var(--cream);
+      display: flex;
+      flex-direction: column;
+      gap: 0.6vmin;
+      overflow-y: auto;
+    }
+    .icon-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5vmin;
+    }
+
+    /* ── BOTTOM BAR ── */
+    .bottombar {
+      border-top: 3px solid var(--gold);
+      padding: 6px;
+      background: var(--cream);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      height: 25vmin;
+      min-height: 0;
+      flex-shrink: 0;
+    }
+
+    /* ── PANEL HEADER ── */
+    .panel-hdr {
+      background: var(--tb-bg);
+      color: var(--tb-col);
+      padding: 0.5vmin 0.6vmin;
+      font-size: 0.8vmin;
+      border: 1px solid var(--gold);
+      letter-spacing: 0.05vmin;
+      flex-shrink: 0;
+    }
+
+    /* ── PROJECT WINDOW (left panel) ── */
+    .proj {
+      border: 0.25vmin solid var(--win-bdr);
+      background: var(--win-bg);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: border-color 0.08s;
+    }
+    .proj:hover { border-color: var(--yellow2); }
+
+    .proj-hdr {
+      background: var(--tb-bg);
+      color: var(--tb-col);
+      padding: 0.4vmin 0.5vmin;
+      font-size: 0.75vmin;
+      display: flex;
+      align-items: center;
+      gap: 0.4vmin;
+    }
+    .proj-hdr::before { content: '■'; color: var(--red); font-size: 0.6vmin; }
+
+    .proj-thumb { height: 7.5vmin; overflow: hidden; position: relative; }
+
+    .proj-meta {
+      background: var(--dark);
+      padding: 0.4vmin 0.5vmin;
+      color: var(--cream);
+      font-size: 0.65vmin;
+      line-height: 2;
+    }
+    .proj-meta .t { color: var(--yellow); }
+
+    /* ── ICON WINDOW (right panel) ── */
+    .icon-win {
+      border: 0.25vmin solid var(--win-bdr);
+      aspect-ratio: 1;
+      cursor: pointer;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.08s;
+    }
+    .icon-win:hover { border-color: var(--yellow2); }
+
+    .icon-hdr {
+      background: var(--tb-bg);
+      color: var(--tb-col);
+      padding: 0.3vmin 0.4vmin;
+      font-size: 0.6vmin;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .icon-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8vmin;
+      font-family: monospace;
+      font-weight: bold;
+    }
+
+    /* ── BLOG CONTAINER & GRID (bottom bar) ── */
+    .blog-container {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      height: 100%;
+    }
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      overflow-y: auto;
+      flex: 1;
+      padding-right: 4px;
+    }
+
+    /* Scrollbar styling for retro feel */
+    .blog-grid::-webkit-scrollbar,
+    .left-panel::-webkit-scrollbar,
+    .right-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+    .blog-grid::-webkit-scrollbar-track,
+    .left-panel::-webkit-scrollbar-track,
+    .right-panel::-webkit-scrollbar-track {
+      background: var(--dark);
+    }
+    .blog-grid::-webkit-scrollbar-thumb,
+    .left-panel::-webkit-scrollbar-thumb,
+    .right-panel::-webkit-scrollbar-thumb {
+      background: var(--gold);
+      border: 1px solid var(--dark);
+    }
+
+    .blog-win {
+      border: 2px solid var(--win-bdr);
+      background: var(--win-bg);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.08s;
+      overflow: hidden;
+      min-height: 55px;
+    }
+    .blog-win:hover { border-color: var(--yellow2); }
+
+    .blog-hdr {
+      background: var(--tb-bg);
+      color: var(--tb-col);
+      padding: 2.5px 3.5px;
+      font-size: 5.5px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .blog-hdr::before { content: '■'; color: var(--green2); font-size: 4px; }
+
+    .blog-body {
+      padding: 4px;
+      background: var(--dark);
+      color: var(--cream);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5px;
+      overflow: hidden;
+    }
+    .blog-title {
+      color: var(--yellow);
+      font-size: 6px;
+      line-height: 1.2;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .blog-date {
+      color: var(--cream2);
+      font-size: 4.5px;
+    }
+    .blog-desc {
+      font-size: 4.5px;
+      line-height: 1.35;
+      color: #908870;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ── BLINK ── */
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .blink { animation: blink 1.2s step-end infinite; }
+
+    /* ── CONTACT BLOCK ── */
+    .contact-block {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      border: 2px solid var(--win-bdr);
+      padding: 8px 12px;
+      background: var(--dark);
+      min-width: 110px;
+      flex-shrink: 0;
+      height: 100%;
+    }
+    .contact-label { color: #504020; font-size: 5px; margin-bottom: 2px; }
+    .contact-block a {
+      color: var(--yellow);
+      text-decoration: none;
+      font-size: 5px;
+      display: block;
+    }
+    .contact-block a:hover { color: var(--yellow2); }
+  </style>
+</head>
+<body>
+
+<div class="frame">
+
+  <!-- ── TOP BAR ── -->
+  <div class="topbar">
+    <div class="tb-gem"></div>
+    <div class="tb-title">SIMON HOLMQVIST // PORTFOLIO.EXE</div>
+    <div class="tb-right">
+      <span class="tb-ver">VER&nbsp;1.0</span>
+      <div class="led" style="color:#60c840; background:#60c840;"></div>
+      <div class="led" style="color:#d8a818; background:#d8a818;"></div>
+      <div class="led" style="color:#c02020; background:#c02020;"></div>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONTENT ── -->
+  <div class="content">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+      <div class="panel-hdr">[ PROJECTS ]</div>
+
+      <div class="proj" onclick="window.open('https://github.com/HolmanDev/LOD-Planets-in-Unity', '_blank')">
+        <div class="proj-hdr">PLANETS.EXE</div>
+        <div class="proj-thumb" style="background: url('images/lod_planets.png') no-repeat center; background-size: cover;"></div>
+        <div class="proj-meta">
+          <span class="t">TYPE:</span> PLANET GEN<br>
+          <span class="t">LANG:</span> C# / UNITY<br>
+          <span class="t">STARS:</span> 96 ★
+        </div>
+      </div>
+
+      <div class="proj" onclick="window.open('https://github.com/HolmanDev/Physics-based-vehicles', '_blank')">
+        <div class="proj-hdr">VEHICLES.EXE</div>
+        <div class="proj-thumb" style="background: url('images/physics_vehicles.png') no-repeat center; background-size: cover;"></div>
+        <div class="proj-meta">
+          <span class="t">TYPE:</span> PHYSICS SIM<br>
+          <span class="t">LANG:</span> C# / UNITY<br>
+          <span class="t">STARS:</span> 41 ★
+        </div>
+      </div>
+
+      <div class="proj" onclick="window.open('https://github.com/HolmanDev/PlayerController', '_blank')">
+        <div class="proj-hdr">PLAYER_CTRL.EXE</div>
+        <div class="proj-thumb" style="background: url('images/player_controller.png') no-repeat center; background-size: cover;"></div>
+        <div class="proj-meta">
+          <span class="t">TYPE:</span> CONTROLLER<br>
+          <span class="t">LANG:</span> C# / UNITY<br>
+          <span class="t">STARS:</span> 8 ★
+        </div>
+      </div>
+
+      <div class="proj" onclick="window.open('https://github.com/HolmanDev/NBSS', '_blank')">
+        <div class="proj-hdr">NBSS.EXE</div>
+        <div class="proj-thumb" style="background: url('images/nbody_simulation.png') no-repeat center; background-size: cover;"></div>
+        <div class="proj-meta">
+          <span class="t">TYPE:</span> N-BODY SIM<br>
+          <span class="t">LANG:</span> PYTHON<br>
+          <span class="t">STARS:</span> 1 ★
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CENTER (empty) -->
+    <div class="center">
+      <div class="center-frame"></div>
+      <div class="center-cursor"><span class="blink">█</span></div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+      <div class="panel-hdr">[ SKILLS ]</div>
+      <div class="icon-grid">
+
+        <div class="icon-win">
+          <div class="icon-hdr">JS</div>
+          <div class="icon-body" style="background:#c8a010; color:#181008;">JS</div>
+        </div>
+        <div class="icon-win">
+          <div class="icon-hdr">TS</div>
+          <div class="icon-body" style="background:#1858a8; color:#e0e8f8;">TS</div>
+        </div>
+        <div class="icon-win">
+          <div class="icon-hdr">REACT</div>
+          <div class="icon-body" style="background:#0c1828; color:#4090d0; font-size:20px;">⚛</div>
+        </div>
+        <div class="icon-win">
+          <div class="icon-hdr">PYTHON</div>
+          <div class="icon-body" style="background:#1c3060; color:#d0c040; font-size:12px;">Py</div>
+        </div>
+        <div class="icon-win">
+          <div class="icon-hdr">NODE</div>
+          <div class="icon-body" style="background:#182810; color:#70b828; font-size:20px;">⬡</div>
+        </div>
+        <div class="icon-win">
+          <div class="icon-hdr">CSS</div>
+          <div class="icon-body" style="background:#181860; color:#8090e8; font-size:11px;">CSS</div>
+        </div>
+        <div class="icon-win">
+          <div class="icon-hdr">SQL</div>
+          <div class="icon-body" style="background:#302008; color:#d07830; font-size:13px;">DB</div>
+        </div>
+        <div class="icon-win">
+          <div class="icon-hdr">GIT</div>
+          <div class="icon-body" style="background:#300808; color:#c83820; font-size:20px;">⎇</div>
+        </div>
+        <div class="icon-win">
+          <div class="icon-hdr">RUST</div>
+          <div class="icon-body" style="background:#280c04; color:#c84828; font-size:12px;">Rs</div>
+        </div>
+        <div class="icon-win">
+          <div class="icon-hdr">DOCKER</div>
+          <div class="icon-body" style="background:#081828; color:#1888c8; font-size:18px;">🐳</div>
+        </div>
+        <div class="icon-win">
+          <div class="icon-hdr">LINUX</div>
+          <div class="icon-body" style="background:#101018; color:#d0d0d8; font-size:18px;">🐧</div>
+        </div>
+        <div class="icon-win">
+          <div class="icon-hdr">C++</div>
+          <div class="icon-body" style="background:#182840; color:#4878b0; font-size:12px;">C++</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BOTTOM BAR ── -->
+  <div class="bottombar">
+
+    <div class="blog-container">
+      <div class="panel-hdr" style="margin-bottom: 5px;">[ BLOG.EXE ]</div>
+      <div class="blog-grid">
+        <div class="blog-win">
+          <div class="blog-hdr">DEV_LOG_01.TXT</div>
+          <div class="blog-body">
+            <div class="blog-title">PRODUCING PLANETS IN C#</div>
+            <div class="blog-date">DATE: 2026-05-18</div>
+            <div class="blog-desc">Optimizing Level of Detail (LOD) planet meshes with octrees in Unity...</div>
+          </div>
+        </div>
+        <div class="blog-win">
+          <div class="blog-hdr">SHADER_EXP.INI</div>
+          <div class="blog-body">
+            <div class="blog-title">EXPLORING SHADER GRAPH</div>
+            <div class="blog-date">DATE: 2026-05-10</div>
+            <div class="blog-desc">Custom vertex displacement shaders for fluid water surfaces...</div>
+          </div>
+        </div>
+        <div class="blog-win">
+          <div class="blog-hdr">N_BODY_SIM.LOG</div>
+          <div class="blog-body">
+            <div class="blog-title">N-BODY GRAVITY SIMULATION</div>
+            <div class="blog-date">DATE: 2026-04-28</div>
+            <div class="blog-desc">Writing custom Euler integration methods for multi-body orbital tracks...</div>
+          </div>
+        </div>
+        <div class="blog-win">
+          <div class="blog-hdr">UI_DESIGN.SYS</div>
+          <div class="blog-body">
+            <div class="blog-title">RETRO OS WEB DESIGN</div>
+            <div class="blog-date">DATE: 2026-04-15</div>
+            <div class="blog-desc">How to style classic DOS/Win16-like interfaces using modern CSS grid...</div>
+          </div>
+        </div>
+        <div class="blog-win">
+          <div class="blog-hdr">DOCKER_CFG.BAT</div>
+          <div class="blog-body">
+            <div class="blog-title">CONTAINERIZING STACKS</div>
+            <div class="blog-date">DATE: 2026-03-30</div>
+            <div class="blog-desc">Setting up multi-stage alpine builds for rust and node microservices...</div>
+          </div>
+        </div>
+        <div class="blog-win">
+          <div class="blog-hdr">RUST_RULES.EXE</div>
+          <div class="blog-body">
+            <div class="blog-title">MEMORY SAFETY DEMYSTIFIED</div>
+            <div class="blog-date">DATE: 2026-03-12</div>
+            <div class="blog-desc">A deep dive into the borrow checker, lifetimes, and smart pointers...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-block">
+      <div class="contact-label">// CONTACT</div>
+      <a href="https://github.com/HolmanDev" target="_blank">GITHUB</a>
+      <a href="#">LINKEDIN</a>
+      <a href="mailto:simonholmqvist03@gmail.com">EMAIL<span class="blink">_</span></a>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>
