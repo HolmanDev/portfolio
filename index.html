@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -49,11 +49,14 @@
       font-size: 8px;
       color: var(--dark);
       height: 100vh;
+      min-height: 100dvh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 12px;
       overflow: hidden;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
     }
 
     /* Scanlines */
@@ -1195,7 +1198,7 @@
                 </div>
               </div>
               <div class="hud-box hud-scope-box">
-                <div class="hud-box-hdr">SPECIAL SKILLS // SENSOR.LOG</div>
+                <div class="hud-box-hdr">SIGNAL.LOG</div>
                 <div class="hud-box-body flex-col">
                   <div class="hud-scope-container">
                     <canvas id="hud-scope-canvas"></canvas>
